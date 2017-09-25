@@ -9,7 +9,8 @@ public class DataMunger {
 		Scanner sc=new Scanner(System.in);
 		String query=sc.nextLine();
 		DataMunger d= new DataMunger();
-		String []split=d.getSplitStrings(query);
+		d.parseQuery(query);
+		
 //		for(int i=0;i<split.length;i++)
 //			System.out.println(split[i]);
 		
@@ -54,9 +55,9 @@ public class DataMunger {
 		getConditions(queryString);
 		getLogicalOperators(queryString);
 		getFields(queryString);
-		getOrderByFields(queryString);
-		getGroupByFields(queryString);
-		getAggregateFunctions(queryString);
+//		getOrderByFields(queryString);
+//		getGroupByFields(queryString);
+//		getAggregateFunctions(queryString);
 	}
 
 	/*
@@ -66,7 +67,7 @@ public class DataMunger {
 	public String[] getSplitStrings(String queryString) {
 		String []split=queryString.split(" ");
 		for(int i=0;i<split.length;i++)
-			split[i].toLowerCase();
+			split[i]=split[i].toLowerCase();
 		return split;
 	}
 
@@ -103,8 +104,10 @@ public class DataMunger {
 	 *    and order by clause
 	 */
 	public String getBaseQuery(String queryString) {
-
-		String []base=queryString.split(" where");
+		
+		String []base= {""};
+		if(queryString.contains("where"))
+			base=queryString.split("where");
 		return base[0];
 
 	}
@@ -122,12 +125,15 @@ public class DataMunger {
 	 * 2. The query might not contain where clause at all.
 	 */
 	public String getConditionsPartQuery(String queryString) {
-
-		String []condition=queryString.split("where ");
-		String []result;
-		result=condition[1].split("group by | order by");
-		return result[0];
-		
+		queryString=queryString.toLowerCase();
+		String []condition=queryString.split("where");
+			String []result= {};
+//			if(condition[1].contains("group by|order by"))
+//				result=condition[1].split("group by | order by");
+//			else return condition[1];
+//			return result[0];
+			System.out.println(condition[1]);
+		return condition[1];
 
 	}
 
@@ -150,8 +156,12 @@ public class DataMunger {
 	 * 2. The query might not contain where clause at all.
 	 */
 	public String[] getConditions(String queryString) {
-		String condition=getConditionsPartQuery(queryString);
+		queryString=queryString.toLowerCase();
+		String []cond=queryString.split("where ");
+		String condition=cond[1];
 		String []split_cond= condition.split(" and | or ");
+//		for(int i=0;i<split_cond.length;i++)
+//		System.out.print(split_cond[i]);
 		return split_cond;
 		
 	}
@@ -159,6 +169,7 @@ public class DataMunger {
 	
 	public String[] getRelationalOperators(String queryString)
 	{
+		queryString=queryString.toLowerCase();
 		String condition=getConditionsPartQuery(queryString);
 		String []operators=condition.split(" and | or ");
 		
@@ -179,16 +190,19 @@ public class DataMunger {
 	 * 
 	 */
 	public String[] getLogicalOperators(String queryString) {
+		queryString=queryString.toLowerCase();
 		String []split=queryString.split(" ");
 		int c=0;
+		String []oper= {};
 		for(int i=0;i<split.length;i++)
-		{	if(split[i].equals("and") || split[i].equals("or") || split[i].equals("not"))
+		{	if(split[i].matches("and") || split[i].matches("or") || split[i].matches("not"))
 			{
-				System.out.println("Operators "+(++c)+" : "+split[i]);
-				
+				System.out.print(split[i]);
+				oper[c++]=split[i];
 			}
 		}
-		return split;
+		
+		return oper;
 		
 	}
 		
@@ -208,11 +222,11 @@ public class DataMunger {
 	 * 
 	 */
 	public String[] getFields(String queryString) {
+		queryString=queryString.toLowerCase();
 		String []split=queryString.split("from");
-		String []field=queryString.split(",");
-		for(int i=0;i<field.length;i++)
-			System.out.println(field[i]);
-				return field;
+		String []field=split[0].split(" ");
+		String []sel_field=field[1].split(",");
+			return sel_field;
 
 	}
 
